@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches SplashScreen container backgroundColor: '#15123D' -->
+    <color name="splash_bg">#15123D</color>
+</resources>

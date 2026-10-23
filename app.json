@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "BriMinds",
+    "slug": "briminds",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF9F6"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.briminds.app"
+    },
+    "android": {
+      "package": "com.briminds.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FAF9F6"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

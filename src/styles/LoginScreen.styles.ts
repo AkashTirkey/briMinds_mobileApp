@@ -1,0 +1,291 @@
+import { StyleSheet, Platform } from 'react-native';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF9F6',
+  },
+  bgGraphics: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 280,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    paddingBottom: 28,
+    justifyContent: 'space-between',
+  },
+  topSection: {
+    gap: 24,
+  },
+  brandHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 4,
+  },
+  titleSection: {
+    gap: 8,
+  },
+  kicker: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+    color: '#0F6E56',
+  },
+  headline: {
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif' }),
+    fontSize: 34,
+    lineHeight: 40,
+    color: '#1E1A50',
+    fontWeight: '400',
+    letterSpacing: -0.6,
+  },
+  headlineItalic: {
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif' }),
+    fontStyle: 'italic',
+    color: '#1D9E75',
+  },
+  subtitle: {
+    fontSize: 15,
+    lineHeight: 22.5,
+    color: '#5E5D78',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#EEEDFE',
+    borderRadius: 14,
+    padding: 4,
+  },
+  tabButton: {
+    flex: 1,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 11,
+  },
+  tabButtonActive: {
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#1E1A50',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#534AB7',
+  },
+  tabTextActive: {
+    color: '#1E1A50',
+  },
+  formContainer: {
+    gap: 16,
+  },
+  inputGroup: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1E1A50',
+  },
+  phoneRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  countryCodeContainer: {
+    height: 52,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(83,74,183,0.18)',
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+  },
+  countryCodeText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1E1A50',
+  },
+  phoneInput: {
+    flex: 1,
+    height: 52,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(83,74,183,0.18)',
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1A1A2E',
+    letterSpacing: 0.4,
+  },
+  emailInputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  emailIcon: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
+  },
+  emailInput: {
+    height: 52,
+    paddingLeft: 46,
+    paddingRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(83,74,183,0.18)',
+    borderRadius: 14,
+    backgroundColor: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#1A1A2E',
+  },
+  helperText: {
+    fontSize: 12.5,
+    color: '#6B6A84',
+    lineHeight: 17,
+  },
+  submitButton: {
+    height: 54,
+    borderRadius: 14,
+    backgroundColor: '#534AB7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#534AB7',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.28,
+    shadowRadius: 24,
+    elevation: 5,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#DCDAF5',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  submitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  submitButtonTextDisabled: {
+    color: '#534AB7',
+    opacity: 0.6,
+  },
+  inputFocused: {
+    borderColor: '#534AB7',
+  },
+  // OTP Styles
+  otpHeader: {
+    gap: 4,
+  },
+  otpTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1E1A50',
+  },
+  otpSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  otpSubtitle: {
+    fontSize: 13.5,
+    color: '#5E5D78',
+  },
+  changeLink: {
+    fontSize: 13.5,
+    fontWeight: '600',
+    color: '#534AB7',
+    textDecorationLine: 'underline',
+  },
+  otpInputsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  otpInput: {
+    flex: 1,
+    height: 56,
+    borderWidth: 1,
+    borderColor: 'rgba(83,74,183,0.18)',
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#1E1A50',
+    padding: 0,
+    includeFontPadding: false,
+  },
+  otpInputFilled: {
+    borderColor: '#534AB7',
+  },
+  resendText: {
+    fontSize: 12.5,
+    color: '#6B6A84',
+  },
+  resendTimer: {
+    fontWeight: '600',
+    color: '#1E1A50',
+  },
+  resendLink: {
+    fontWeight: '600',
+    color: '#534AB7',
+    textDecorationLine: 'underline',
+  },
+  // Bottom section
+  bottomSection: {
+    gap: 24,
+    marginTop: 24,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(83,74,183,0.14)',
+  },
+  dividerText: {
+    fontSize: 12,
+    color: '#6B6A84',
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#0F6E56',
+    textAlign: 'center',
+  },
+  registerLink: {
+    color: '#534AB7',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  errorBanner: {
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#FCA5A5',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  errorBannerText: {
+    color: '#991B1B',
+    fontSize: 13,
+    fontWeight: '500',
+    lineHeight: 18,
+  },
+});
+
