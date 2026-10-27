@@ -45,6 +45,7 @@ export const HomeScreen = () => {
           ref={webviewRef}
           source={{ uri: DASHBOARD_URL }}
           injectedJavaScriptBeforeContentLoaded={injectedJS}
+          showsVerticalScrollIndicator={false}
           onLoadStart={() => setWebviewLoading(true)}
           onLoadEnd={() => setWebviewLoading(false)}
           javaScriptEnabled={true}

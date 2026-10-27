@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
   container: {
     ...globalStyles.lightContainer,
     justifyContent: 'center',
-    padding: 24,
+    // padding: 24,
   },
   title: {
     fontSize: 48,
@@ -17,5 +17,12 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.textMuted,
     lineHeight: 28,
+  },
+   webviewContainer: {
+    // paddingTop: 40,
+    flex: 1,               // takes all remaining space below the stats
+    // borderTopWidth: 1,
+    // borderTopColor: '#efefef',
+    overflow: 'hidden',
   },
 });
