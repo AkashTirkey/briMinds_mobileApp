@@ -6,7 +6,7 @@ import{ WebView , WebViewMessageEvent }from 'react-native-webview';
 import { styles } from '../styles/ProfileScreen.styles';
 import { useAuthStore } from '../store/authStore';
 
-const PROFILE_URL = "http://192.168.1.111:3000/in/profile/";
+const PROFILE_URL = "http://192.168.1.113:3000/in/profile/";
 // const PROFILE_URL = "http://uat.briminds.ai/in/profile/";
 
 const TOP_BAR_COLOR = '#c7d5eb'; // Set to match your web dashboard header color
@@ -174,6 +174,7 @@ const handleWebViewMessage = (event: WebViewMessageEvent) => {
       <WebView
       ref={webviewRef}
       source={{uri: PROFILE_URL}}
+      // this is used for hiding the scroll indicator
       showsVerticalScrollIndicator={false}
       onMessage={handleWebViewMessage}
       injectedJavaScriptBeforeContentLoaded={injectedJS}
@@ -181,6 +182,8 @@ const handleWebViewMessage = (event: WebViewMessageEvent) => {
       onLoadEnd={()=> setProfileLoading(false)}
       javaScriptEnabled={true}
       domStorageEnabled={true}
+      // bounce is used for preventing scrolling past the given height
+      bounces={false}
       thirdPartyCookiesEnabled={true}
       sharedCookiesEnabled={true}
       applicationNameForUserAgent='Myapp-ReactNative'

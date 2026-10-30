@@ -3,7 +3,7 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // const DASHBOARD_URL = 'https://uat.briminds.ai/in/dashboard';
-const DASHBOARD_URL = 'http://192.168.1.111:3000/in/olympiad';
+const DASHBOARD_URL = 'http://192.168.1.113:3000/in/olympiad';
 
 const TOP_BAR_COLOR = '#c7d5eb';
 

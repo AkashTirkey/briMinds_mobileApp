@@ -10,6 +10,7 @@ import {
 } from '../api/authApi';
 
 const AUTH_TOKEN_KEY = '@briminds_auth_token';
+const DEVICE_ID_KEY = '@briminds_device_id';
 
 // ---------------------------------------------------------------------------
 // Store State & Actions Interface
@@ -22,6 +23,12 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+
+  // deviceId
+  deviceId: string | null;
+  setDeviceId: (deviceId: string) => Promise<void>;
+  initDeviceId: () => Promise<void>;
+
 
   // Actions
   sendOtp: (
@@ -58,6 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  deviceId:null,
 
   /**
    * Clear active error message
@@ -213,4 +221,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     return false;
   },
+
+  initDeviceId: async () => {
+  try {
+    const savedDeviceId = await AsyncStorage.getItem(DEVICE_ID_KEY);
+
+    if (savedDeviceId) {
+      set({ deviceId: savedDeviceId });
+    }
+  } catch (error) {
+    console.warn('[authStore] Failed to restore device ID:', error);
+  }
+},
+
+  setDeviceId: async (deviceId: string) => {
+  await AsyncStorage.setItem(DEVICE_ID_KEY, deviceId);
+  set({ deviceId });
+}
 }));
+

@@ -18,6 +18,7 @@ import { SvgXml } from 'react-native-svg';
 import { textLogoSvg } from '../assets/svgs';
 import { useAuthStore } from '../store/authStore';
 
+
 const { width: W, height: H } = Dimensions.get('window');
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -176,6 +177,18 @@ export const SplashScreen = ({ navigation }: any) => {
     }, 2000);
     return () => clearTimeout(timer);
   }, [reducedMotion, navigation, initAuth, driftAT, driftBT, footerEnter, halo1T, halo2T, logoRot, masterT, nodePulseT, progressT, uiEnter]);
+
+  // Store Device Id
+  // const storeDeviceId = async()=>{
+  //     const deviceId = await DeviceInfo.getUniqueId();
+  //   AsyncStorage.setItem("device-id",deviceId);
+  // }
+
+  // useEffect(()=>{
+  //   storeDeviceId();
+  // },[])
+  
+
 
   const driftAProps = useAnimatedProps(() => {
     if (reducedMotion) return { x: 0, y: 0 };

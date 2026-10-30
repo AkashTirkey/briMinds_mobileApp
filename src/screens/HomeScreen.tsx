@@ -6,6 +6,7 @@ import { styles } from '../styles/HomeScreen.styles';
 import { useAuthStore } from '../store/authStore';
 
 // const DASHBOARD_URL = 'https://uat.briminds.ai/in/dashboard';
+// const DASHBOARD_URL = 'http://192.168.1.111:3000/in/olympiad';
 const DASHBOARD_URL = 'http://uat.briminds.ai/in/olympiad';
 
 const TOP_BAR_COLOR = '#c7d5eb'; // Set to match your web dashboard header color
@@ -45,9 +46,12 @@ export const HomeScreen = () => {
           ref={webviewRef}
           source={{ uri: DASHBOARD_URL }}
           injectedJavaScriptBeforeContentLoaded={injectedJS}
+          // this is used for hiding the scroll indicator
           showsVerticalScrollIndicator={false}
           onLoadStart={() => setWebviewLoading(true)}
           onLoadEnd={() => setWebviewLoading(false)}
+      // bounce is used for preventing scrolling past the given height
+          bounces={false}
           javaScriptEnabled={true}
           domStorageEnabled={true}
           thirdPartyCookiesEnabled={true}
