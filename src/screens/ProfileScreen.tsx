@@ -5,8 +5,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import{ WebView , WebViewMessageEvent }from 'react-native-webview';
 import { styles } from '../styles/ProfileScreen.styles';
 import { useAuthStore } from '../store/authStore';
+// import ENV from "../config"
 
-const PROFILE_URL = "http://192.168.1.113:3000/in/profile/";
+// const BASE_URL = ENV.webURL;
+
+
+const PROFILE_URL = 'http://192.168.1.127:3000/in/profile/';
 // const PROFILE_URL = "http://uat.briminds.ai/in/profile/";
 
 const TOP_BAR_COLOR = '#c7d5eb'; // Set to match your web dashboard header color

@@ -1,66 +1,129 @@
-import React from 'react';
-import {useRef,useEffect} from 'react'
-import { View } from 'react-native';
-import WebView from 'react-native-webview';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { View, ActivityIndicator, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import WebView, { WebViewMessageEvent } from 'react-native-webview';
+import { useNavigation } from '@react-navigation/native';
 import { styles } from '../styles/OlympiadScreen.styles';
 import { useAuthStore } from '../store/authStore';
-import DeviceInfo from 'react-native-device-info';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import ENV from "../config"
 
+// const BASE_URL = ENV.webURL;
 
-const OLYMPIAD_URL = "http://192.168.1.113:3000/in/olympiad/session"
+const OLYMPIAD_SESSION_URL = 'http://192.168.1.127:3000/in/olympiad/session';
+const TOP_BAR_COLOR = '#c7d5eb';
 
 export const OlympiadScreen = () => {
-    const webviewRef = useRef<React.ComponentRef<typeof WebView>>(null);
-    const deviceId = useAuthStore((state) => state.deviceId);
-    const setDeviceId = useAuthStore((state) => state.setDeviceId);
-    const initDeviceId = useAuthStore((state) => state.initDeviceId);
+  const navigation = useNavigation<any>();
+  const webviewRef = useRef<React.ComponentRef<typeof WebView>>(null);
+  const deviceId = useAuthStore((state) => state.deviceId);
+  const initDeviceId = useAuthStore((state) => state.initDeviceId);
+  const user = useAuthStore((state) => state.user);
 
-    useEffect(()=>{
-      const loadDevice = async()=>{
-        await initDeviceId();
+  const [isDeviceReady, setIsDeviceReady] = useState<boolean>(Boolean(deviceId));
+  const [webviewLoading, setWebviewLoading] = useState<boolean>(true);
 
-        const existingId = useAuthStore.getState().deviceId;
-
-        if(!existingId){
-          const id = await DeviceInfo.getUniqueId();
-          await setDeviceId(id);
-          console.log("setDeviceId",deviceId)
+  useEffect(() => {
+    let isMounted = true;
+    const prepareDevice = async () => {
+      try {
+        const currentId = useAuthStore.getState().deviceId;
+        if (!currentId) {
+          await initDeviceId();
         }
-      };
+      } catch (err) {
+        console.error('[OlympiadScreen] Failed to prepare device ID:', err);
+      } finally {
+        if (isMounted) setIsDeviceReady(true);
+      }
+    };
+    prepareDevice();
+    return () => { isMounted = false; };
+  }, [initDeviceId]);
 
-      loadDevice();
-    },[])
-
-    const injectedJS = `
-      window.__BRIMINDS_DEVICE_ID__ = ${JSON.stringify(deviceId)};
-      localStorage.setItem("device_id", ${JSON.stringify(deviceId)});
+  const injectedJS = useMemo(() => {
+    const activeDeviceId = deviceId || useAuthStore.getState().deviceId || '';
+    const userData = user ? JSON.stringify(user) : null;
+    return `
+      (function() {
+        try {
+          var did = ${JSON.stringify(activeDeviceId)};
+          if (did && window.localStorage) {
+            window.__BRIMINDS_DEVICE_ID__ = did;
+            window.localStorage.setItem('device_id', did);
+          }
+          ${userData
+            ? `if (window.localStorage) {
+                 window.localStorage.setItem('@User', ${JSON.stringify(userData)});
+               }`
+            : ''}
+        } catch (e) {}
+      })();
       true;
-    `
-  
+    `;
+  }, [deviceId, user]);
+
+  // ─── CHANGED: handle messages from the web ───────────────────────────────
+  const handleMessage = (event: WebViewMessageEvent) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+
+      // Web signals the user clicked "Start Test" — RN handles the navigation
+      if (data?.type === 'START_TEST') {
+        navigation.navigate('OlympiadTest', {
+          olympiadId: data.olympiadId,   // passed from web
+          deviceId: useAuthStore.getState().deviceId || '',
+          user: useAuthStore.getState().user,
+        });
+        return;
+      }
+
+      // Legacy: web is asking for device ID via postMessage
+      if (data?.type === 'GET_DEVICE_ID') {
+        const currentDeviceId = useAuthStore.getState().deviceId || '';
+        webviewRef.current?.postMessage(
+          JSON.stringify({ type: 'DEVICE_ID_RESPONSE', deviceId: currentDeviceId })
+        );
+      }
+    } catch {
+      // Non-JSON message, safe to ignore
+    }
+  };
+  // ─────────────────────────────────────────────────────────────────────────
+
+  if (!isDeviceReady) {
+    return (
+      <SafeAreaView edges={['top']} style={[styles.container, styles.loadingContainer, { backgroundColor: TOP_BAR_COLOR }]}>
+        <ActivityIndicator size="large" color="#534AB7" />
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      {/* <Text style={styles.title}>Coming{"\n"}soon.</Text>
-      <Text style={styles.subtitle}>
-        The BriMinds AI Olympiad is on its way. Stay tuned!
-      </Text> */}
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: TOP_BAR_COLOR }]}>
+      <StatusBar barStyle="dark-content" />
       <View style={styles.webviewContainer}>
-      <WebView
-      ref={webviewRef}
-      source={{uri: OLYMPIAD_URL}}
-      // this is used for hiding the scroll indicator
-      showsVerticalScrollIndicator={false}
-      bounces={false}
-      injectedJavaScriptBeforeContentLoaded={injectedJS}
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
-      thirdPartyCookiesEnabled={true}
-      sharedCookiesEnabled={true}
-      applicationNameForUserAgent='Myapp-ReactNative'
-      />
+        {webviewLoading && (
+          <View style={styles.webviewLoader}>
+            <ActivityIndicator size="large" color="#534AB7" />
+          </View>
+        )}
+        <WebView
+          ref={webviewRef}
+          source={{ uri: OLYMPIAD_SESSION_URL }}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          injectedJavaScriptBeforeContentLoaded={injectedJS}
+          injectedJavaScript={injectedJS}
+          onLoadStart={() => setWebviewLoading(true)}
+          onLoadEnd={() => setWebviewLoading(false)}
+          onMessage={handleMessage}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          thirdPartyCookiesEnabled={true}
+          sharedCookiesEnabled={true}
+          applicationNameForUserAgent="MyApp-ReactNative"
+        />
       </View>
-      
-    </View>
+    </SafeAreaView>
   );
 };
-

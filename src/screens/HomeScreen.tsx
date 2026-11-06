@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView from 'react-native-webview';
 import { styles } from '../styles/HomeScreen.styles';
 import { useAuthStore } from '../store/authStore';
+import ENV from "../config"
+
+const baseURL = ENV.webURL;
 
 // const DASHBOARD_URL = 'https://uat.briminds.ai/in/dashboard';
 // const DASHBOARD_URL = 'http://192.168.1.111:3000/in/olympiad';
