@@ -1,18 +1,13 @@
-import React, { useRef, useState, useMemo } from 'react';
-import { View, ActivityIndicator, StatusBar, BackHandler } from 'react-native';
+import React, { useRef, useState, useMemo, useCallback } from 'react';
+import { View, ActivityIndicator, StatusBar, BackHandler, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView, { WebViewMessageEvent } from 'react-native-webview';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
-import { StyleSheet,TouchableOpacity,Text } from 'react-native';
 import { colors } from '../styles/global';
 import { useAuthStore } from '../store/authStore';
-// import ENV from "../config";
+// import ENV from '../config';
 
-
-const BASE_URL = "http://192.168.1.127:3000";
-
-const URL = BASE_URL;
+const BASE_URL = "http://192.168.1.110:3000";
 const TOP_BAR_COLOR = '#c7d5eb';
 
 export const OlympiadTestScreen = () => {
@@ -21,15 +16,16 @@ export const OlympiadTestScreen = () => {
   const webviewRef = useRef<React.ComponentRef<typeof WebView>>(null);
   const [webviewLoading, setWebviewLoading] = useState(true);
 
-  const { olympiadId, deviceId: routeDeviceId, user: routeUser } = route.params || {};
+  const { olympiadId, deviceId: routeDeviceId, user: routeUser, sessionToken: routeSessionToken } = route.params || {};
 
   const deviceId = routeDeviceId || useAuthStore.getState().deviceId || '';
+  const sessionToken = routeSessionToken || '';
   const user = routeUser || useAuthStore.getState().user;
 
-  // Build the URL — pass olympiadId as a query param so the page is self-contained
+  // Build URL — pass olympiadId as query param so the page is self-contained
   const testUrl = olympiadId
-    ? `${URL}/in/olympiad/test?oid=${olympiadId}`
-    : `${URL}/in/olympiad/test`;
+    ? `${BASE_URL}/olympiad/test?oid=${olympiadId}`
+    : `${BASE_URL}/olympiad/test`;
 
   // Inject auth context into the test page
   const injectedJS = useMemo(() => {
@@ -42,6 +38,11 @@ export const OlympiadTestScreen = () => {
             window.__BRIMINDS_DEVICE_ID__ = did;
             window.localStorage.setItem('device_id', did);
           }
+          // var sid = ${JSON.stringify(sessionToken)};
+          // if (sid && window.localStorage) {
+          //   window.__BRIMINDS_SESSION_TOKEN__ = sid;
+          //   window.localStorage.setItem('olympiadSession', sid);
+          // }
           ${userData
             ? `if (window.localStorage) {
                  window.localStorage.setItem('@User', ${JSON.stringify(userData)});
@@ -53,81 +54,63 @@ export const OlympiadTestScreen = () => {
     `;
   }, [deviceId, user]);
 
-  // Handle hardware back button — exit the test and go back to session tab
+  // Disable Android hardware back button and gesture navigation
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        navigation.goBack();
-        return true; // prevent default back behaviour
+        // Return true to block/consume the back gesture without exiting
+        return true;
       };
       const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
       return () => subscription.remove();
-    }, [navigation])
+    }, [])
   );
 
   // Handle messages from the test page
   const handleMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
-      console.log('[OLYMPIADtESTsCREEN] Received data:', data);
-
-      // Web signals the test is finished or user wants to exit
-      if (data?.type === 'EXIT_TEST' || data?.type === 'TEST_COMPLETE') {
+      if (data?.type === 'EXIT_TEST' || data?.type === 'GO_BACK' || data?.type === 'TEST_COMPLETE') {
         navigation.goBack();
       }
-      else if(data?.type=== "SUBMIT_TEST"){
-        navigation.navigate("OlympiadCompletion");
+      else if (data?.type === "SUBMIT_TEST") {
+        // replace, so the finished test can't be reached with Back
+        navigation.replace('OlympiadCompletion');
       }
     } catch {
-      // ignore non-JSON
+      // ignore non-JSON messages
     }
   };
 
-  
-
-return (
-  <SafeAreaView
-    edges={['top']}
-    style={[styles.container, { backgroundColor: TOP_BAR_COLOR }]}
-  >
-    <StatusBar barStyle="dark-content" />
-
-    {/* Back button */}
-    {/* <TouchableOpacity
-      style={styles.backButton}
-      onPress={() => navigation.goBack()}
-      activeOpacity={0.7}
-    >
-      <Text style={styles.backText}>← Back</Text>
-    </TouchableOpacity> */}
-
-    {/* WebView */}
-    <View style={styles.webviewContainer}>
-      {webviewLoading && (
-        <View style={styles.webviewLoader}>
-          <ActivityIndicator size="large" color="#534AB7" />
-        </View>
-      )}
-
-      <WebView
-        ref={webviewRef}
-        source={{ uri: testUrl }}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        injectedJavaScriptBeforeContentLoaded={injectedJS}
-        injectedJavaScript={injectedJS}
-        onLoadStart={() => setWebviewLoading(true)}
-        onLoadEnd={() => setWebviewLoading(false)}
-        onMessage={handleMessage}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        thirdPartyCookiesEnabled={true}
-        sharedCookiesEnabled={true}
-        applicationNameForUserAgent="MyApp-ReactNative"
-      />
-    </View>
-  </SafeAreaView>
-);
+  return (
+    <SafeAreaView edges={['top']} style={[styles.container, { backgroundColor: TOP_BAR_COLOR }]}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.webviewContainer}>
+        {webviewLoading && (
+          <View style={styles.webviewLoader}>
+            <ActivityIndicator size="large" color="#534AB7" />
+          </View>
+        )}
+        <WebView
+          ref={webviewRef}
+          source={{ uri: testUrl }}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          allowsBackForwardNavigationGestures={false}
+          injectedJavaScriptBeforeContentLoaded={injectedJS}
+          injectedJavaScript={injectedJS}
+          onLoadStart={() => setWebviewLoading(true)}
+          onLoadEnd={() => setWebviewLoading(false)}
+          onMessage={handleMessage}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          thirdPartyCookiesEnabled={true}
+          sharedCookiesEnabled={true}
+          applicationNameForUserAgent="MyApp-ReactNative"
+        />
+      </View>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -150,16 +133,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warmLightBg,
     zIndex: 10,
   },
-   backButton: {
-  height: 48,
-  paddingHorizontal: 16,
-  justifyContent: 'center',
-  alignSelf: 'flex-start',
-},
-
-backText: {
-  fontSize: 17,
-  fontWeight: '600',
-  color: '#1E1A50',
-}
 });

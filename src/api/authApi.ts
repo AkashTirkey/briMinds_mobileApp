@@ -128,7 +128,7 @@ async function request<T>(
 
     return data as ApiResponse<T>;
   } catch (error: any) {
-    console.error(`[API Error] ${endpoint}:`, error.message);
+    console.log(`[API Error] ${endpoint}:`, error);
     throw error;
   }
 }

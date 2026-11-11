@@ -9,7 +9,7 @@ import { useAuthStore } from '../store/authStore';
 
 // const BASE_URL = ENV.webURL;
 
-const OLYMPIAD_SESSION_URL = 'http://192.168.1.127:3000/in/olympiad/session';
+const OLYMPIAD_SESSION_URL = 'http://192.168.1.110:3000/olympiad/session';
 const TOP_BAR_COLOR = '#c7d5eb';
 
 export const OlympiadScreen = () => {
@@ -73,6 +73,13 @@ export const OlympiadScreen = () => {
           olympiadId: data.olympiadId,   // passed from web
           deviceId: useAuthStore.getState().deviceId || '',
           user: useAuthStore.getState().user,
+        });
+        return;
+      }
+
+      if(data?.type === 'OLYMPIAD_COMPLETED'){
+        navigation.replace('OlympiadCompletion',{
+          olympiadId: data.olympiadId,
         });
         return;
       }
